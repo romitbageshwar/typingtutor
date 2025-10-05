@@ -3,7 +3,30 @@ import time
 import threading
 
 # --- PAGE CONFIG ---
+# --- PAGE CONFIG ---
 st.set_page_config(page_title="Typing Tutor Pro", page_icon="⌨️", layout="wide")
+
+# --- SECURITY JAVASCRIPT / CSS ---
+st.markdown("""
+    <style>
+    * { user-select: none !important; -webkit-user-select: none !important; }
+    body { -webkit-touch-callout: none; }
+    textarea, input { user-select: text !important; }
+    </style>
+
+    <script>
+    document.addEventListener('contextmenu', e => e.preventDefault());
+    document.addEventListener('keydown', e => {
+        if (e.ctrlKey && ['c','v','s','p'].includes(e.key.toLowerCase())) e.preventDefault();
+        if (e.key === 'PrintScreen') {
+            navigator.clipboard.writeText('');
+            alert('Screenshots are disabled on this page.');
+        }
+    });
+    document.addEventListener('copy', e => e.preventDefault());
+    document.addEventListener('paste', e => e.preventDefault());
+    </script>
+""", unsafe_allow_html=True)
 
 # --- INITIAL STATE ---
 if "start_time" not in st.session_state:
