@@ -7,54 +7,36 @@ import threading
 st.set_page_config(page_title="Typing Tutor Pro", page_icon="⌨️", layout="wide")
 
 # --- SECURITY JAVASCRIPT / CSS ---
+st.set_page_config(page_title="Typing Tutor Secure", layout="wide")
+
+# --- DISABLE COPY / PASTE ---
 st.markdown("""
 <style>
-/* Prevent text selection except in inputs */
-* { user-select: none !important; -webkit-user-select: none !important; }
-textarea, input { user-select: text !important; }
+/* Disable text selection on everything except typing area */
+* {
+    user-select: none !important;
+    -webkit-user-select: none !important;
+    -moz-user-select: none !important;
+}
 
-/* Blackout overlay for PrintScreen */
-#blackout {
-    display: none;
-    position: fixed;
-    top: 0; left: 0;
-    width: 100%; height: 100%;
-    background: black;
-    z-index: 9999;
+/* Allow typing in text areas */
+textarea, input {
+    user-select: text !important;
 }
 </style>
 
-<div id="blackout"></div>
-
 <script>
-// Prevent right-click
-document.addEventListener('contextmenu', e => e.preventDefault());
-
-// Prevent common Ctrl shortcuts
-document.addEventListener('keydown', e => {
-    if (e.ctrlKey && ['c','v','s','p'].includes(e.key.toLowerCase())) e.preventDefault();
-
-    // Fake blackout on PrintScreen
-    if (e.key === 'PrintScreen') {
-        const overlay = document.getElementById('blackout');
-        overlay.style.display = 'block';
-        setTimeout(() => { overlay.style.display = 'none'; }, 5000); // black for 5 sec
-        alert('Screenshot blocked (blackout applied).');
-    }
-});
-
-// Block copy/paste events
+// Disable copy, cut, and paste
 document.addEventListener('copy', e => e.preventDefault());
+document.addEventListener('cut', e => e.preventDefault());
 document.addEventListener('paste', e => e.preventDefault());
-
-// End test if user switches tab or window
-window.onblur = function() {
-    fetch("/_stcore/stream", {method:"POST"}); // keep connection alive
-    alert("You switched tabs! Test ended for fairness.");
-    window.location.reload();  // refresh app (or call Streamlit rerun)
-}
 </script>
 """, unsafe_allow_html=True)
+
+# --- Example typing area ---
+st.title("Typing Tutor")
+st.text_area("Type here:", height=200)
+st.write("Try to copy or paste text — it is disabled!")
 # --- INITIAL STATE ---
 if "start_time" not in st.session_state:
     st.session_state.start_time = None
